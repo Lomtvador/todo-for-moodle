@@ -7,47 +7,50 @@ else if (typeof chrome !== 'undefined')
 else
     console.error("Can't use WebExtensions API")
 
-namespace.storage.sync.get('myextrakey', printKey)
-
 function printKey(key) {
     console.log(key)
 }
 
-function keyError(err) {
-    console.error(err)
-}
-
-function handleChange(e) {
-    console.log(e.target.checked)
-}
-
 let tasks = document.querySelectorAll('li.activity')
-let parents = document.querySelectorAll('li.activity div div div div')
 let link = new Map() // node + checkbox
-/*for (let parent of parents) {
-    let input = document.createElement("input")
-    input.type = 'checkbox'
-    input.onchange = handleChange
-    //parent.prepend(input)
 
-    //link.set(tasks[parent.getin])
+function update() {
+    let checkbox
+    for (task of tasks) {
+        if (task.classList.contains('forum'))
+            continue
+
+        checkbox = link.get(task).checked
+
+        // indeterminate
+
+        if (checkbox === true) {
+            task.style.background = 'lightgreen'
+        }
+
+        else {
+            task.style.background = 'lightsalmon'
+        }
+    }
 }
-*/
 
 for (let task of tasks) {
+    if (task.classList.contains('forum'))
+        continue
+
     let input = document.createElement("input")
     input.type = 'checkbox'
-    input.onchange = handleChange
+    input.onchange = update
+    let child = task.childNodes[0].childNodes[0].childNodes[1].childNodes[0]
+    child.prepend(input)
 
     link.set(task, input)
 }
 
-for (let parent of parents) {
-    
-}
+update()
 
+/*
 for (let task of tasks) {
-    //const taskId = task.id
     let obj = {}
 
     obj[task.id] = {
@@ -59,7 +62,7 @@ for (let task of tasks) {
 
     namespace.storage.sync.set(obj)
 }
-
+*/
 /*
 for (let task of tasks) {
     namespace.storage.sync.get(task.id, (t) => {
