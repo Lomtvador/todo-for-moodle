@@ -14,15 +14,27 @@ function printKey(key) {
 let tasks = document.querySelectorAll('li.activity')
 let link = new Map() // node + checkbox
 
+function getStorage() {
+    for (let task of tasks) {
+        if (task.classList.contains('forum'))
+            continue
+
+        namespace.storage.sync.get(task.id, (t) => {
+            console.log(t[task.id].completed)
+        })
+    }
+
+    console.log('-----')
+}
+
 function update() {
     let checkbox
+    let obj = {}
     for (task of tasks) {
         if (task.classList.contains('forum'))
             continue
 
         checkbox = link.get(task).checked
-
-        // indeterminate
 
         if (checkbox === true) {
             task.style.background = 'lightgreen'
@@ -31,7 +43,15 @@ function update() {
         else {
             task.style.background = 'lightsalmon'
         }
+
+        obj[task.id] = {
+            'completed': checkbox
+        }
     }
+
+    namespace.storage.sync.set(obj)
+
+    //getStorage()
 }
 
 for (let task of tasks) {
@@ -47,29 +67,16 @@ for (let task of tasks) {
     link.set(task, input)
 }
 
-update()
+function loadSaved() {
+    for (let task of tasks) {
+        if (task.classList.contains('forum'))
+            continue
 
-/*
-for (let task of tasks) {
-    let obj = {}
-
-    obj[task.id] = {
-        'date': '20.03.2020',
-        'status': 1
+        namespace.storage.sync.get(task.id, (t) => {
+            link.get(task).checked = t[task.id].completed
+            update() // !!!!!!!
+        })
     }
-
-    console.log(obj)
-
-    namespace.storage.sync.set(obj)
 }
-*/
-/*
-for (let task of tasks) {
-    namespace.storage.sync.get(task.id, (t) => {
-        console.log(t)
-        if (t[task.id]['status'] === 1) {
-            document.getElementById(task.id).style.background = 'lightgreen'
-        }
-    })
-}
-*/
+
+loadSaved()
