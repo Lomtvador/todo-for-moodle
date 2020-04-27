@@ -7,29 +7,11 @@ else if (typeof chrome !== 'undefined')
 else
     console.error("Can't use WebExtensions API")
 
-function printKey(key) {
-    console.log(key)
-}
-
 let tasks = document.querySelectorAll('li.activity')
-let link = new Map() // node + checkbox
-
-function getStorage() {
-    for (let task of tasks) {
-        if (task.classList.contains('forum'))
-            continue
-
-        namespace.storage.sync.get(task.id, (t) => {
-            console.log(t[task.id].completed)
-        })
-    }
-
-    console.log('-----')
-}
+let link = new Map()
 
 function update() {
     let checkbox
-    //let obj = {}
     for (task of tasks) {
         if (task.classList.contains('forum'))
             continue
@@ -43,38 +25,24 @@ function update() {
         else {
             task.style.background = 'lightsalmon'
         }
-
-        /*obj[task.id] = {
-            'completed': checkbox
-        }*/
     }
-
-    //namespace.storage.sync.set(obj)
-
-    //getStorage()
 }
 
 function write() {
     let checkbox
-    let obj = {}
+    let taskList = {}
+    let taskId
     for (task of tasks) {
         if (task.classList.contains('forum'))
             continue
 
         checkbox = link.get(task).checked
-
-        obj[task.id] = {
-            'completed': checkbox
-        }
+        taskId = (task.id).split('-')[1]
+        taskList[taskId] = checkbox ? 1 : 0
     }
 
-    namespace.storage.sync.set(obj, () => {
-        console.log('saved')
-    })
-
+    namespace.storage.local.set(taskList)
     update()
-
-    //getStorage()
 }
 
 for (let task of tasks) {
@@ -83,7 +51,7 @@ for (let task of tasks) {
 
     let input = document.createElement("input")
     input.type = 'checkbox'
-    input.onchange = write
+    input.addEventListener('change', write)
     let child = task.childNodes[0].childNodes[0].childNodes[1].childNodes[0]
     child.prepend(input)
 
@@ -95,11 +63,12 @@ function loadSaved() {
         if (task.classList.contains('forum'))
             continue
 
-        namespace.storage.sync.get(task.id, (t) => {
-            if (typeof t[task.id] !== 'undefined') {
-                link.get(task).checked = t[task.id].completed
+        let taskId = (task.id).split('-')[1]
+        namespace.storage.local.get(taskId, (t) => {
+            if (typeof t[taskId] !== 'undefined') {
+                link.get(task).checked = t[taskId]
             }
-            update() // !!!!!!!
+            update()
         })
     }
 }

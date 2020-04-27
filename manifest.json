@@ -6,7 +6,7 @@
     "description": "Adds todo list on moodle.nntc.nnov.ru",
     "content_scripts": [
         {
-            "matches": ["https://moodle.nntc.nnov.ru/course/view.php?id=*"],
+            "matches": ["https://moodle.nntc.nnov.ru/*"],
             "js": ["todo.js"],
             "css": ["todo.css"]
         }
