@@ -29,7 +29,7 @@ function getStorage() {
 
 function update() {
     let checkbox
-    let obj = {}
+    //let obj = {}
     for (task of tasks) {
         if (task.classList.contains('forum'))
             continue
@@ -44,12 +44,35 @@ function update() {
             task.style.background = 'lightsalmon'
         }
 
+        /*obj[task.id] = {
+            'completed': checkbox
+        }*/
+    }
+
+    //namespace.storage.sync.set(obj)
+
+    //getStorage()
+}
+
+function write() {
+    let checkbox
+    let obj = {}
+    for (task of tasks) {
+        if (task.classList.contains('forum'))
+            continue
+
+        checkbox = link.get(task).checked
+
         obj[task.id] = {
             'completed': checkbox
         }
     }
 
-    namespace.storage.sync.set(obj)
+    namespace.storage.sync.set(obj, () => {
+        console.log('saved')
+    })
+
+    update()
 
     //getStorage()
 }
@@ -60,7 +83,7 @@ for (let task of tasks) {
 
     let input = document.createElement("input")
     input.type = 'checkbox'
-    input.onchange = update
+    input.onchange = write
     let child = task.childNodes[0].childNodes[0].childNodes[1].childNodes[0]
     child.prepend(input)
 
@@ -73,7 +96,9 @@ function loadSaved() {
             continue
 
         namespace.storage.sync.get(task.id, (t) => {
-            link.get(task).checked = t[task.id].completed
+            if (typeof t[task.id] !== 'undefined') {
+                link.get(task).checked = t[task.id].completed
+            }
             update() // !!!!!!!
         })
     }
