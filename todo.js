@@ -38,7 +38,7 @@ function write() {
 
         checkbox = link.get(task).checked
         taskId = (task.id).split('-')[1]
-        taskList[taskId] = checkbox ? 1 : 0
+        taskList[taskId] = [checkbox ? 1 : 0, ""] // {"10583": [1, "28.04.2020"]}
     }
 
     namespace.storage.local.set(taskList)
@@ -66,11 +66,15 @@ function loadSaved() {
         let taskId = (task.id).split('-')[1]
         namespace.storage.local.get(taskId, (t) => {
             if (typeof t[taskId] !== 'undefined') {
-                link.get(task).checked = t[taskId]
+                link.get(task).checked = t[taskId][0]
             }
             update()
         })
     }
 }
+
+chrome.storage.local.get(function(data) {
+    console.log(JSON.stringify(data));
+  });
 
 loadSaved()
