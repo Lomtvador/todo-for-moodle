@@ -7,8 +7,7 @@
     "content_scripts": [
         {
             "matches": ["https://moodle.nntc.nnov.ru/*"],
-            "js": ["todo.js"],
-            "css": ["todo.css"]
+            "js": ["todo.js"]
         }
     ],
     "permissions": ["storage"]
