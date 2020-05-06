@@ -44,6 +44,17 @@ function checkboxChange(checkbox) {
 }
 
 function Todo() {
+    let regionMain = document.getElementById('region-main')
+
+    regionMain.insertAdjacentHTML('beforeend',
+    `
+    <h3>Всего: <span id="extensionAllTasks">0</span></h3>
+    <h3>Выполнено: <span id="extensionCompleteTasks" style="color: green;">0</span></h3>
+    <h3>Не выполнено: <span id="extensionIncompleteTasks" style="color: red;">0</span></h3>
+    <h3>Процент выполненного: <span id="extensionRatio">0</span>%</h3>
+    `
+    )
+
     let htmlLinks = document.querySelectorAll('li.activity a')
 
     for (let a of htmlLinks) {
@@ -55,6 +66,8 @@ function Todo() {
 
     function update() {
         let checkbox
+        let complete = 0
+
         for (task of tasks) {
             if (task.classList.contains('forum'))
                 continue
@@ -63,12 +76,35 @@ function Todo() {
 
             if (checkbox === true) {
                 task.style.background = 'lightgreen'
+                complete++
             }
 
             else {
                 task.style.background = 'lightsalmon'
             }
         }
+
+        document.getElementById('extensionAllTasks')
+            .textContent = tasks.length - 1
+
+        document.getElementById('extensionCompleteTasks')
+            .textContent = complete
+
+        document.getElementById('extensionIncompleteTasks')
+            .textContent = (tasks.length - 1) - complete
+
+        let extensionRatio = document.getElementById('extensionRatio')
+        let ratio = complete / (tasks.length - 1) * 100
+
+        if (ratio >= 75) {
+            extensionRatio.style.color = 'green'
+        } else if (ratio >= 50) {
+            extensionRatio.style.color = '#938723'
+        } else {
+            extensionRatio.style.color = 'red'
+        }
+
+        extensionRatio.textContent = ratio.toFixed(2)
     }
 
     function write() {
