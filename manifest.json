@@ -1,7 +1,7 @@
 {
     "author": "Ilya Shabalin",
     "manifest_version": 2,
-    "version": "1.0.0",
+    "version": "1.1.0",
     "name": "Todo list for moodle.nntc.nnov.ru",
     "description": "Adds todo list on moodle.nntc.nnov.ru",
     "content_scripts": [
